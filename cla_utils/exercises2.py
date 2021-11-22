@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def orthog_cpts(v, Q):
     """
     Given a vector v and an orthonormal set of vectors q_1,...q_n,
@@ -16,7 +15,12 @@ def orthog_cpts(v, Q):
     :return u: an n-dimensional numpy array containing the coefficients
     """
 
-    raise NotImplementedError
+    u = np.zeros(np.shape(Q)[1])
+
+    for j in range(np.shape(Q)[1]):
+        u[j] = np.inner(np.conjugate(Q[:, j]), v)
+
+    r = v - np.sum(np.inner(u[j], Q[:, j]) for j in range(len(u)))
 
     return r, u
 
@@ -31,7 +35,8 @@ def solveQ(Q, b):
     :return x: m dimensional array containing the solution.
     """
 
-    raise NotImplementedError
+    Q_star = np.conjugate(Q).T
+    x = np.dot(Q_star, b)
 
     return x
 
@@ -48,7 +53,7 @@ def orthog_proj(Q):
     :return P: an mxm-dimensional numpy array containing the projector
     """
 
-    raise NotImplementedError
+    P = np.dot(Q, np.conjugate(Q).T)
 
     return P
 
@@ -65,9 +70,10 @@ def orthog_space(V):
     orthonormal basis for the subspace orthogonal to U, for appropriate l.
     """
 
-    raise NotImplementedError
+    Q = np.linalg.qr(V, mode='complete')[0]
+    Q_ort = Q[:, np.shape(V)[1]:]
 
-    return Q
+    return Q_ort
 
 
 def GS_classical(A):
@@ -79,8 +85,16 @@ def GS_classical(A):
 
     :return R: nxn numpy array
     """
+    
+    R = np.zeros((np.shape(A)[1], np.shape(A)[1]))
 
-    raise NotImplementedError
+    for j in range(np.shape(A)[1]):
+        v = A[:, j]
+        for i in range(j):
+            R[i, j] = np.dot(np.conjugate(A[:, i]), A[:, j])
+            v -= R[i, j] * A[:, i]
+        R[j, j] = np.linalg.norm(v)
+        A[:, j] = v / R[j, j]
 
     return R
 
@@ -95,7 +109,15 @@ def GS_modified(A):
     :return R: nxn numpy array
     """
 
-    raise NotImplementedError
+    R = np.zeros((np.shape(A)[1], np.shape(A)[1]))
+    V = A.copy()
+
+    for i in range(np.shape(A)[1]):
+        R[i, i] = np.linalg.norm(V[:, i])
+        A[:, i] = V[:, i] / R[i, i]
+        for j in range(i+1, np.shape(A)[1]):
+            R[i, j] = np.dot(np.conjugate(A[:, i]), V[:, j])
+            V[:, j] -= R[i, j] * A[:, i]
 
     return R
 
@@ -114,7 +136,11 @@ def GS_modified_get_R(A, k):
     :return R: nxn numpy array
     """
 
-    raise NotImplementedError
+    R = np.eye(np.shape(A)[1])
+
+    R[k, k] = np.linalg.norm(A[:, k])
+    for j in range(k+1, np.shape(A)[1]):
+        R[k, j] = np.dot(np.conjugate(A[:, k]), A[:, j])
 
     return R
 

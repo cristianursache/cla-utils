@@ -22,7 +22,13 @@ def basic_matvec(A, x):
     :return b: m-dimensional numpy array
     """
 
-    raise NotImplementedError
+    b = np.zeros(np.shape(A)[0])
+
+    for i in range(np.shape(A)[0]):
+        for j in range(np.shape(A)[1]):
+            b[i] += A[i, j] * x[j]
+
+    return b
 
 
 def column_matvec(A, x):
@@ -40,7 +46,12 @@ def column_matvec(A, x):
     This should be implemented using a single loop over the entries of x
     """
 
-    raise NotImplementedError
+    b = np.zeros(np.shape(A)[0])
+
+    for j in range(np.shape(A)[1]):
+        b += x[j] * A[:, j]
+
+    return b
 
 
 def timeable_basic_matvec():
@@ -93,8 +104,8 @@ def rank2(u1, u2, v1, v2):
     :param v2: n-dimensional numpy array
     """
 
-    raise NotImplementedError
-
+    B = np.column_stack((u1, u2))
+    C = np.conjugate(np.column_stack((v1, v2))).T
     A = B.dot(C)
 
     return A
@@ -109,7 +120,8 @@ def rank1pert_inv(u, v):
     :param v: m-dimensional numpy array
     """
 
-    raise NotImplementedError
+    alpha = -1 / (1 + np.inner(u, np.conjugate(v)))
+    Ainv = np.eye(len(u)) + alpha * np.outer(u, np.conjugate(v))
 
     return Ainv
 
@@ -125,6 +137,20 @@ def ABiC(Ahat, xr, xi):
     :return zi: m-dimensional numpy arrays containing the imaginary part of z.
     """
 
-    raise NotImplementedError
+    zr, zi = np.zeros(len(xr)), np.zeros(len(xi))
+
+    A = np.empty((len(Ahat), len(Ahat)), dtype=complex)
+
+    for i in range(len(A)):
+        for j in range(len(A)):
+            if i > j:
+                A[i, j] = complex(Ahat[i, j], - Ahat[j, i])
+            elif i < j:
+                A[i, j] = complex(Ahat[j, i], Ahat[i, j])
+            else:
+                A[i, j] = complex(Ahat[i, j], 0)
+    
+    zr = np.dot(A.real, xr) - np.dot(A.imag, xi)
+    zi = np.dot(A.real, xi) + np.dot(A.imag, xr)
 
     return zr, zi

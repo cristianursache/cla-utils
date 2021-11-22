@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.linalg import solve_triangular
 
 
 def householder(A, kmax=None):
@@ -18,7 +19,17 @@ def householder(A, kmax=None):
     if kmax is None:
         kmax = n
 
-    raise NotImplementedError
+    R = A.copy()
+
+    for k in range(kmax):
+        x = R[k:, k]
+        if x[0] != 0:
+            alpha = np.sign(x[0]) * np.linalg.norm(x)
+        else:
+            alpha = np.linalg.norm(x)
+        v = alpha * np.array([1 if i == 0 else 0 for i in range(len(x))]) + x
+        v /= np.linalg.norm(v)
+        R[k:, k:] -= 2 * np.dot(np.outer(v, v), R[k:, k:])
 
     return R
 
@@ -36,7 +47,14 @@ def householder_solve(A, b):
     right-hand side vectors x_1,x_2,...,x_k.
     """
 
-    raise NotImplementedError
+    A_hat = A.copy()
+    for i in range(np.shape(b)[1]):
+        A_hat = np.column_stack((A_hat, b[:, i]))
+    R_hat = householder(A_hat, kmax=np.shape(A)[1])
+
+    x = np.zeros(np.shape(b))
+    for i in range(np.shape(x)[1]):
+        x[:, i] = solve_triangular(R_hat[:, :np.shape(A)[1]], R_hat[:, np.shape(A)[1]+i])
 
     return x
 
@@ -52,8 +70,12 @@ def householder_qr(A):
     :return R: an mxn-dimensional numpy array
     """
 
-    raise NotImplementedError
-
+    
+    A_hat = np.concatenate((A, np.eye(np.shape(A)[0])), axis=1)
+    QR = householder(A_hat, kmax=np.shape(A)[1])
+    R = QR[:, :np.shape(A)[1]]
+    Q = QR[:, np.shape(A)[1]:].T
+    
     return Q, R
 
 
@@ -68,6 +90,8 @@ def householder_ls(A, b):
     :return x: an n-dimensional numpy array
     """
 
-    raise NotImplementedError
+    A_hat = np.column_stack((A, b))
+    R_hat = householder(A_hat, kmax=np.shape(A)[1])
+    x = solve_triangular(R_hat[:np.shape(A)[1], :np.shape(A)[1]], R_hat[:np.shape(A)[1], np.shape(A)[1]])
 
     return x
