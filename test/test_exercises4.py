@@ -16,6 +16,14 @@ def test_operator_2_norm(m, n):
 
     assert(np.abs(norm1 - norm2) < 1.0e-6)
 
+@pytest.mark.parametrize('m, n', [(20, 10), (40, 25), (15, 65)])
+def test_test_ineq(m, n):
+    random.seed(5689*m + 123*n)
+    A = random.randn(m, n)
+    x = random.randn(n)
+
+    assert(cla_utils.test_ineq(A, x))
+
 @pytest.mark.parametrize('m', [20, 40, 233])
 def test_cond(m):
     random.seed(3168*m)

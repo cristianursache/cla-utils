@@ -10,9 +10,15 @@ def operator_2_norm(A):
     :return o2norm: the norm
     """
 
-    raise NotImplementedError
+    s = max(np.linalg.eig(A.T @ A)[0])
+    o2norm = np.sqrt(s)
 
     return o2norm
+
+
+def test_ineq(A, x):
+
+    return (np.linalg.norm(A @ x) <= operator_2_norm(A) * np.linalg.norm(x))
 
 
 def cond(A):
