@@ -16,9 +16,14 @@ def operator_2_norm(A):
     return o2norm
 
 
-def test_ineq(A, x):
+def test_ineq_1(A, x):
 
     return (np.linalg.norm(A @ x) <= operator_2_norm(A) * np.linalg.norm(x))
+
+
+def test_ineq_2(A, B):
+
+    return (operator_2_norm(A @ B) <= operator_2_norm(A) * operator_2_norm(B))
 
 
 def cond(A):
