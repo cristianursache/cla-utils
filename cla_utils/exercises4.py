@@ -35,6 +35,8 @@ def cond(A):
     :param ncond: the condition number
     """
 
-    raise NotImplementedError
+    norm_A = np.sqrt(max(np.linalg.eig(A.T @ A)[0]))
+    norm_A_inv = np.sqrt(max(1 / np.linalg.eig(A @ A.T)[0]))
+    ncond = norm_A * norm_A_inv
 
     return ncond
