@@ -66,7 +66,16 @@ def solve_L(L, b):
 
     """
 
-    raise NotImplementedError
+    m, k = np.shape(b)
+
+    x = np.zeros((m, k))
+
+    for i in range(k):
+        x[0, i] = b[0, i] / L[0, 0]
+        for j in range(1, m):
+            x[j, i] = (b[j, i] - np.dot(L[j, :j], x[:j, i])) / L[j, j]
+
+    return x
 
 
 def solve_U(U, b):
@@ -81,7 +90,16 @@ def solve_U(U, b):
 
     """
                      
-    raise NotImplementedError
+    m, k = np.shape(b)
+
+    x = np.zeros((m, k))
+
+    for i in range(k):
+        x[-1, i] = b[-1, i] / U[-1, -1]
+        for j in range(m-2, -1, -1):
+            x[j, i] = (b[j, i] - np.dot(U[j, j+1:], x[j+1:, i])) / U[j, j]
+
+    return x
 
 
 def inverse_LU(A):
@@ -90,8 +108,20 @@ def inverse_LU(A):
 
     :param A: an mxm-dimensional numpy array.
 
-    :return Ainv: an mxm-dimensional numpy array.
+    :return X: an mxm-dimensional numpy array.
 
     """
-                     
-    raise NotImplementedError
+
+    m = len(A)                 
+    
+    LU = LU_inplace(A)
+    L = np.tril(LU, -1) + np.eye(m)
+    U = np.triu(LU)
+
+    print(L)
+    print(U)
+    
+    Y = solve_L(L, np.eye(m))
+    X = solve_U(U, Y)
+
+    return X
