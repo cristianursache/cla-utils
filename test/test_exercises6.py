@@ -70,7 +70,7 @@ def test_solve_U(m, k):
 
 @pytest.mark.parametrize('m', [20, 204, 18])
 def test_inverse_LU(m):
-    random.seed(5422*m)
+    random.seed(5423*m)
     A = random.randn(m, m)
     A0 = 1.0*A
 
