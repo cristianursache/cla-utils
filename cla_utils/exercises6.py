@@ -8,11 +8,18 @@ def get_Lk(m, lvec):
 
     :param m: integer giving the dimensions of L.
     :param lvec: a m-k-1 dimensional numpy array.
+
     :return Lk: an mxm dimensional numpy array.
 
     """
 
-    raise NotImplementedError
+    k = m - len(lvec) - 1
+    
+    Lk = np.eye(m)
+    Lk[k+1:, k] = -lvec
+
+    return Lk
+
 
 
 def LU_inplace(A):
@@ -25,8 +32,26 @@ def LU_inplace(A):
     :param A: an mxm-dimensional numpy array
 
     """
-                     
-    raise NotImplementedError
+
+    m = len(A)                 
+
+    # 2 for loops implementation:
+    #for k in range(m-1):
+        #for j in range(k+1, m):
+            #A[j, k] /= A[k, k]
+            #A[j, k+1:] -= A[j, k] * A[k, k+1:]
+    
+    # 1 for loop & outer product implementation:
+    for k in range(m-1):
+        lk = np.zeros(m)
+        lk[k+1:] = -A[k+1:, k] / A[k, k]
+        ek = np.zeros(m)
+        ek[k] = 1
+        outer = np.outer(lk, ek)
+        A[k:, k:] += outer[k:, k:] @ A[k:, k:]
+        A -= outer
+
+    return A
 
 
 def solve_L(L, b):
