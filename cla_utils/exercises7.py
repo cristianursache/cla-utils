@@ -75,6 +75,27 @@ def solve_LUP(A, b):
 
     return x
 
+def perm_sign(p):
+    """
+    Compute the sign of a permutation (given as a vector p).
+
+    :param p: an n-dimensional numpy array of integers
+    """
+
+    cnt = 0
+    n = len(p)
+
+    for i in range(n-1):
+        for j in range(i, n):
+            if p[j] < p[i]:
+                cnt += 1
+    
+    if cnt % 2 == 0:
+        return 1
+    else:
+        return -1
+
+
 def det_LUP(A):
     """
     Find the determinant of A using LUP factorisation.
@@ -86,10 +107,12 @@ def det_LUP(A):
                      
     m = len(A)
     
-    LUP_inplace(A)
+    p = LUP_inplace(A)
     
     det = 1
     for i in range(m):
         det *= A[i, i]
-    
-    return det
+
+    s = perm_sign(p)
+
+    return det * s
