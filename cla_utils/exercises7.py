@@ -1,4 +1,5 @@
 import numpy as np
+from cla_utils import solve_L, solve_U
 
 def perm(p, i, j):
     """
@@ -60,7 +61,19 @@ def solve_LUP(A, b):
     :return x: an m-dimensional numpy array
     """
                      
-    raise NotImplementedError
+    m = len(A)
+
+    A1 = 1.0 * A             
+    
+    p = LUP_inplace(A1)
+    L = np.tril(A1, -1) + np.eye(m)
+    U = np.triu(A1)
+
+    Pb = np.array([b[i] for i in p]).reshape(m, 1)
+    y = solve_L(L, Pb)
+    x = solve_U(U, y)
+
+    return x
 
 def det_LUP(A):
     """
@@ -71,4 +84,12 @@ def det_LUP(A):
     :return detA: floating point number, the determinant.
     """
                      
-    raise NotImplementedError
+    m = len(A)
+    
+    LUP_inplace(A)
+    
+    det = 1
+    for i in range(m):
+        det *= A[i, i]
+    
+    return det
