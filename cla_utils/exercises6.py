@@ -117,9 +117,6 @@ def inverse_LU(A):
     LU = LU_inplace(A)
     L = np.tril(LU, -1) + np.eye(m)
     U = np.triu(LU)
-
-    print(L)
-    print(U)
     
     Y = solve_L(L, np.eye(m))
     X = solve_U(U, Y)
