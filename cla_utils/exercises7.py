@@ -9,7 +9,10 @@ def perm(p, i, j):
     :param p: an m-dimensional numpy array of integers.
     """
 
-    raise NotImplementedError
+    pij = p
+    pij[i], pij[j] = pij[j], pij[i]
+
+    return pij
 
 
 def LUP_inplace(A):
