@@ -41,7 +41,7 @@ def test_solve_LUP(m):
     A0 = 1.0*A
     b = random.randn(m)
     x = cla_utils.solve_LUP(A, b)
-    assert(np.linalg.norm(b - np.dot(A0, x)) < 1.0e-6)
+    assert(np.linalg.norm(b - (A0 @ x).reshape(1, m)) < 1.0e-6)
 
 
 @pytest.mark.parametrize('m', [3, 9, 18])
