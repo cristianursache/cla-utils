@@ -3,7 +3,12 @@ from cla_utils import LU_inplace
 
 def createA(n):
     """
+    Given an integer n, creates a (4n+1)x(4n+1) matrix A of the form 
+    given in the question.
 
+    :input n: an integer
+
+    :return A: a (4n+1)x(4n+1)-dimensional numpy array
     """
 
     A = np.zeros((4*n + 1, 4*n + 1))
@@ -26,7 +31,13 @@ print(U)
 
 def modified_LU(A):
     """
+    Given a matrix A of the form given in the question, computes the
+    LU decomposition (taking full advantage of its sparsity structure).
 
+    :input: a (4n+1)x(4n+1)-dimensional numpy array
+
+    :return A: a (4n+1)x(4n+1)-dimensional numpy array containing the
+    values for reconstructing L and U.
     """
 
     m = len(A)
