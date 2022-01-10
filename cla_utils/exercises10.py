@@ -16,7 +16,22 @@ def arnoldi(A, b, k):
     Hessenberg matrix
     """
 
-    raise NotImplementedError
+    m = len(A)
+
+    Q = np.zeros((m, k+1), dtype=complex)
+    H = np.zeros((k+1, k), dtype=complex)
+
+    Q[:, 0] = b / np.linalg.norm(b)
+
+    for n in range(k):
+        v = A @ Q[:, n]
+        for j in range(n+1):
+            H[j, n] = np.dot(np.conjugate(Q[:, j]), v)
+            v -= H[j, n] * Q[:, j]
+        H[n+1, n] = np.linalg.norm(v)
+        Q[:, n+1] = v / np.linalg.norm(v)
+    
+    return Q, H
 
 
 def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
