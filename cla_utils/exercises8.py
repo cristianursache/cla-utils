@@ -35,7 +35,19 @@ def hessenberg(A):
     :param A: an mxm numpy array
     """
 
-    
+    m = len(A)
+
+    for k in range(m-1):
+        x = A[k+1:, k]
+        if x[0] != 0:
+            alpha = np.sign(x[0]) * np.linalg.norm(x)
+        else:
+            alpha = np.linalg.norm(x)
+        v = alpha * np.array([1 if i == 0 else 0 for i in range(len(x))]) + x
+        v /= np.linalg.norm(v)
+
+        A[k+1:, k:] -= 2 * np.dot(np.outer(v, v), A[k+1:, k:])
+        A[k:, k+1:] -= 2 * np.outer(A[k:, k+1:] @ v, v)
 
 
 def hessenbergQ(A):
