@@ -37,7 +37,7 @@ def hessenberg(A):
 
     m = len(A)
 
-    for k in range(m-1):
+    for k in range(m-2):
         x = A[k+1:, k]
         if x[0] != 0:
             alpha = np.sign(x[0]) * np.linalg.norm(x)
@@ -47,7 +47,7 @@ def hessenberg(A):
         v /= np.linalg.norm(v)
 
         A[k+1:, k:] -= 2 * np.dot(np.outer(v, v), A[k+1:, k:])
-        A[k:, k+1:] -= 2 * np.outer(A[k:, k+1:] @ v, v)
+        A[:, k+1:] -= 2 * np.outer(A[:, k+1:] @ v, v)
 
 
 def hessenbergQ(A):
@@ -61,7 +61,25 @@ def hessenbergQ(A):
     :return Q: an mxm numpy array
     """
 
-    raise NotImplementedError
+    m = len(A)
+
+    Q = np.eye(m)
+
+    for k in range(m-2):
+        x = A[k+1:, k]
+        if x[0] != 0:
+            alpha = np.sign(x[0]) * np.linalg.norm(x)
+        else:
+            alpha = np.linalg.norm(x)
+        v = alpha * np.array([1 if i == 0 else 0 for i in range(len(x))]) + x
+        v /= np.linalg.norm(v)
+
+        A[k+1:, k:] -= 2 * np.dot(np.outer(v, v), A[k+1:, k:])
+        A[:, k+1:] -= 2 * np.outer(A[:, k+1:] @ v, v)
+        Q[:, k+1:] -= 2 * np.outer(Q[:, k+1:] @ v, v)
+    
+    return Q
+
 
 def hessenberg_ev(H):
     """
@@ -90,4 +108,6 @@ def ev(A):
     :return V: an mxm numpy array whose columns are the eigenvectors of A
     """
 
-    raise NotImplementedError
+    Q = hessenbergQ(A)
+    V = hessenberg_ev(A)
+    return Q @ V
