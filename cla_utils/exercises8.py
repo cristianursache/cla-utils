@@ -1,4 +1,5 @@
 import numpy as np
+from cla_utils.exercises3 import householder
 
 def Q1AQ1s(A):
     """
@@ -10,7 +11,20 @@ def Q1AQ1s(A):
     :return A1: an mxm numpy array
     """
 
-    raise NotImplementedError
+    A1 = A.copy()
+
+    x = A1[:, 0]
+    if x[0] != 0:
+            alpha = np.sign(x[0]) * np.linalg.norm(x)
+    else:
+        alpha = np.linalg.norm(x)
+    v = alpha * np.array([1 if i == 0 else 0 for i in range(len(x))]) + x
+    v /= np.linalg.norm(v)
+
+    A1[:, :] -= 2 * np.dot(np.outer(v, v),  A1[:, :])
+    A1[:, :] -= 2 * np.outer(A1[:, :] @ v, v)
+
+    return A1
 
 
 def hessenberg(A):
@@ -21,7 +35,7 @@ def hessenberg(A):
     :param A: an mxm numpy array
     """
 
-    raise NotImplementedError
+    
 
 
 def hessenbergQ(A):
