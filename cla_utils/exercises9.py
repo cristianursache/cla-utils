@@ -1,5 +1,7 @@
 import numpy as np
 import numpy.random as random
+from scipy.linalg import solve
+from cla_utils.exercises3 import householder_qr
 
 def get_A100():
     """
@@ -108,7 +110,7 @@ def pow_it(A, x0, tol, maxit, store_iterations=False):
     :return lambda0: the final eigenvalue.
     """
     
-    x = x0
+    x = x0 / np.linalg.norm(x0)
     if store_iterations:
         iter = [x]
     
@@ -127,7 +129,7 @@ def pow_it(A, x0, tol, maxit, store_iterations=False):
         return x, lambda0
 
 
-def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
+def inverse_it(A, x0, mu, tol, maxit, store_iterations=False):
     """
     For a Hermitian matrix A, apply the inverse iteration algorithm
     with initial guess x0, using the same termination criteria as
@@ -150,10 +152,30 @@ def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
     all the iterates.
     """
 
+    m = len(A)
     
+    x = x0 / np.linalg.norm(x0)
+    if store_iterations:
+        iter_evec = [x]
+        iter_eval = [np.dot(np.conjugate(x), A) @ x]
+
+    for _ in range(maxit):
+        x = solve(A - mu * np.eye(m), x)
+        x /= np.linalg.norm(x)
+        l = np.dot(np.conjugate(x), A) @ x
+        if store_iterations:
+            iter_evec.append(x)
+            iter_eval.append(l)
+        if np.linalg.norm(A @ x - l * x) < tol:
+            break
+    
+    if store_iterations:
+        return iter_evec, iter_eval
+    else:
+        return x, l
 
 
-def rq_it(A, x0, tol, maxit, store_iterations = False):
+def rq_it(A, x0, tol, maxit, store_iterations=False):
     """
     For a Hermitian matrix A, apply the Rayleigh quotient algorithm
     with initial guess x0, using the same termination criteria as
@@ -175,7 +197,28 @@ def rq_it(A, x0, tol, maxit, store_iterations = False):
     all the iterates.
     """
 
-    raise NotImplementedError
+    m = len(A)
+    
+    x = x0 / np.linalg.norm(x0)
+    l = np.dot(np.conjugate(x), A) @ x
+    if store_iterations:
+        iter_evec = [x]
+        iter_eval = [l]
+    
+    for _ in range(maxit):
+        x = solve(A - l * np.eye(m), x)
+        x /= np.linalg.norm(x)
+        l = np.dot(np.conjugate(x), A) @ x
+        if store_iterations:
+            iter_evec.append(x)
+            iter_eval.append(l)
+        if np.linalg.norm(A @ x - l * x) < tol:
+            break
+
+    if store_iterations:
+        return iter_evec, iter_eval
+    else:
+        return x, l
 
 
 def pure_QR(A, maxit, tol):
@@ -189,6 +232,14 @@ def pure_QR(A, maxit, tol):
     :return Ak: the result
     """
 
-    raise NotImplementedError
-
+    Ak = A
+    
+    for _ in range(maxit):
+        Q, R = householder_qr(Ak)
+        Ak = R @ Q
+        T = np.tril(Ak, -1)
+        if np.linalg.norm(T) < tol:
+            break
+    
+    return Ak
 
