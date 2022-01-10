@@ -61,7 +61,7 @@ def get_A3():
     :return A3: a 3x3 numpy array.
     """
 
-    return array([[ 0.68557183+0.46550108j,  0.12934765-0.1622676j ,
+    return np.array([[ 0.68557183+0.46550108j,  0.12934765-0.1622676j ,
                     0.24409518+0.25335939j],
                   [ 0.1531015 +0.66678983j,  0.45112492+0.18206976j,
                     -0.02633966+0.43477693j],
@@ -75,7 +75,7 @@ def get_B3():
 
     :return B3: a 3x3 numpy array.
     """
-    return array([[ 0.46870499+0.37541453j,  0.19115959-0.39233203j,
+    return np.array([[ 0.46870499+0.37541453j,  0.19115959-0.39233203j,
                     0.12830659+0.12102382j],
                   [ 0.90249603-0.09446345j,  0.51584055+0.84326503j,
                     -0.02582305+0.23259079j],
@@ -83,7 +83,7 @@ def get_B3():
                     0.51545446-0.21867957j]])
 
 
-def pow_it(A, x0, tol, maxit, store_iterations = False):
+def pow_it(A, x0, tol, maxit, store_iterations=False):
     """
     For a matrix A, apply the power iteration algorithm with initial
     guess x0, until either 
@@ -107,9 +107,24 @@ def pow_it(A, x0, tol, maxit, store_iterations = False):
     the iterates.
     :return lambda0: the final eigenvalue.
     """
-
-    Raise(NotImplementedError)
-    return x, lambda0
+    
+    x = x0
+    if store_iterations:
+        iter = [x]
+    
+    for _ in range(maxit):
+        x = A @ x
+        x /= np.linalg.norm(x)
+        lambda0 = np.dot(x, A) @ x
+        if store_iterations:
+            iter.append(x)
+        if np.linalg.norm(A @ x - lambda0 * x) < tol:
+            break
+    
+    if store_iterations:
+        return iter, lambda0
+    else:
+        return x, lambda0
 
 
 def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
@@ -135,7 +150,7 @@ def inverse_it(A, x0, mu, tol, maxit, store_iterations = False):
     all the iterates.
     """
 
-    raise NotImplementedError
+    
 
 
 def rq_it(A, x0, tol, maxit, store_iterations = False):
