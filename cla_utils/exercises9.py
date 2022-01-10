@@ -232,7 +232,7 @@ def pure_QR(A, maxit, tol):
     :return Ak: the result
     """
 
-    Ak = A
+    Ak = A.copy()
     
     for _ in range(maxit):
         Q, R = householder_qr(Ak)
@@ -242,4 +242,3 @@ def pure_QR(A, maxit, tol):
             break
     
     return Ak
-
