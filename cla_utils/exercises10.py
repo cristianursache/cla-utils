@@ -1,5 +1,5 @@
 import numpy as np
-import numpy.random as random
+from cla_utils import householder_ls
 
 
 def arnoldi(A, b, k):
@@ -59,7 +59,53 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
     if x0 is None:
         x0 = b
     
-    raise NotImplementedError
+    m = len(A)
+
+    Q = np.zeros((m, maxit+1), dtype=complex)
+    H = np.zeros((maxit+1, maxit), dtype=complex)
+
+    Q[:, 0] = b / np.linalg.norm(b)
+
+    if return_residual_norms:
+        rnorms = []
+    if return_residuals:
+        r = []
+
+    nits = 0
+
+    for n in range(maxit):
+        v = A @ Q[:, n]
+        for j in range(n+1):
+            H[j, n] = np.dot(np.conjugate(Q[:, j]), v)
+            v -= H[j, n] * Q[:, j]
+        H[n+1, n] = np.linalg.norm(v)
+        Q[:, n+1] = v / np.linalg.norm(v)
+
+        if n > 0:
+            e = np.zeros(n+1, dtype=complex)
+            e[0] = np.linalg.norm(b)
+            y = householder_ls(H[:n+1, :n], e)
+            x = Q[:, :n] @ y
+            R = H[:n+1, :n] @ y - e
+            if return_residual_norms:
+                rnorms.append(np.linalg.norm(R))
+            if return_residuals:
+                r.append(R)
+            if np.linalg.norm(R) < tol:
+                break
+        
+        nits += 1
+    
+    if return_residual_norms:
+        return rnorms
+    elif return_residuals:
+        return r
+
+    if nits == maxit:
+        nits = -1
+    return x, nits
+
+
 
 
 def get_AA100():
