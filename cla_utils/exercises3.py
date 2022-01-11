@@ -24,12 +24,12 @@ def householder(A, kmax=None):
     for k in range(kmax):
         x = R[k:, k]
         if x[0] != 0:
-            alpha = np.sign(x[0]) * np.linalg.norm(x)
+            alpha = (x[0] / np.abs(x[0])) * np.linalg.norm(x)
         else:
             alpha = np.linalg.norm(x)
         v = alpha * np.array([1 if i == 0 else 0 for i in range(len(x))]) + x
         v /= np.linalg.norm(v)
-        R[k:, k:] -= 2 * np.dot(np.outer(v, v), R[k:, k:])
+        R[k:, k:] -= 2 * np.dot(np.outer(v, np.conjugate(v)), R[k:, k:])
 
     return R
 
