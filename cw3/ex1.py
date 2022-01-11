@@ -1,8 +1,6 @@
 import numpy as np
 from cla_utils import pure_QR
 
-# add docstrings + examples for n = 2, 3
-
 def createA(n):
     """
     Given n, creates a 2nx2n matrix of the type A.
