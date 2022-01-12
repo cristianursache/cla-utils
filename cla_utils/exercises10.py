@@ -25,9 +25,11 @@ def arnoldi(A, b, k):
 
     for n in range(k):
         v = A @ Q[:, n]
-        for j in range(n+1):
-            H[j, n] = np.dot(np.conjugate(Q[:, j]), v)
-            v -= H[j, n] * Q[:, j]
+        #for j in range(n+1):
+            #H[j, n] = np.dot(np.conjugate(Q[:, j]), v)
+            #v -= H[j, n] * Q[:, j]
+        H[:n+1, n] = np.conjugate(Q[:, :n+1]).T @ v
+        v -= Q[:, :n+1] @ H[:n+1, n]
         H[n+1, n] = np.linalg.norm(v)
         Q[:, n+1] = v / np.linalg.norm(v)
     
@@ -75,9 +77,11 @@ def GMRES(A, b, maxit, tol, x0=None, return_residual_norms=False,
 
     for n in range(maxit):
         v = A @ Q[:, n]
-        for j in range(n+1):
-            H[j, n] = np.dot(np.conjugate(Q[:, j]), v)
-            v -= H[j, n] * Q[:, j]
+        #for j in range(n+1):
+            #H[j, n] = np.dot(np.conjugate(Q[:, j]), v)
+            #v -= H[j, n] * Q[:, j]
+        H[:n+1, n] = np.conjugate(Q[:, :n+1]).T @ v
+        v -= Q[:, :n+1] @ H[:n+1, n]
         H[n+1, n] = np.linalg.norm(v)
         Q[:, n+1] = v / np.linalg.norm(v)
 
