@@ -221,7 +221,7 @@ def rq_it(A, x0, tol, maxit, store_iterations=False):
         return x, l
 
 
-def pure_QR(A, maxit, tol=1e-12, tridiagonal=False, shifted=False):
+def pure_QR(A, maxit, tol=1e-12, tridiagonal=False, shifted=False, count_its=False):
     """
     For matrix A, apply the QR algorithm and return the result.
 
@@ -238,6 +238,8 @@ def pure_QR(A, maxit, tol=1e-12, tridiagonal=False, shifted=False):
 
     if tridiagonal:
         off = []
+
+    nits = 0
     
     for _ in range(maxit):
         if shifted:
@@ -251,6 +253,7 @@ def pure_QR(A, maxit, tol=1e-12, tridiagonal=False, shifted=False):
         else:
             Q, R = householder_qr(Ak)
             Ak = R @ Q
+            nits += 1
         
         if tridiagonal:
             off.append(np.abs(Ak[m-1, m-2]))
@@ -263,5 +266,7 @@ def pure_QR(A, maxit, tol=1e-12, tridiagonal=False, shifted=False):
     
     if tridiagonal:
         return Ak, off
+    if count_its:
+        return nits
     else:
         return Ak
