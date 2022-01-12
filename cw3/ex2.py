@@ -14,14 +14,18 @@ hessenberg(A)
 Ak = pure_QR(A, 10000, tridiagonal=True)[0]
 print(np.diag(Ak, 0))
 
-def modified_QR(A, maxit):
+def modified_QR(A, maxit, shifted=False):
     e = []
     off = []
     m = len(A)
     hessenberg(A)
     for k in range(m-1, -1, -1):
-        Ak, off_k = pure_QR(A, maxit, tridiagonal=True)
-        off.extend(off_k)
+        if k != 0:
+            Ak, off_k = pure_QR(A, maxit, tridiagonal=True, shifted=shifted)
+        else:
+            Ak, off_k = pure_QR(A, maxit, tridiagonal=True, shifted=False)
+        if k != 0:
+            off.extend(off_k)
         e.append(Ak[k, k])
         A = Ak[:k, :k]
     return e, off
@@ -30,6 +34,9 @@ A = createAij(5)
 print(modified_QR(A, 5000)[0])
 
 A = createAij(5)
-plt.figure()
-plt.plot(modified_QR(A, 5000)[1])
-plt.yscale('log')
+#plt.figure()
+#plt.plot(modified_QR(A, 5000)[1])
+#plt.yscale('log')
+
+A = createAij(5)
+print(modified_QR(A, 5000, shifted=True)[0])
