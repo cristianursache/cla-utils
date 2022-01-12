@@ -253,7 +253,7 @@ def pure_QR(A, maxit, tol=1e-12, tridiagonal=False, shifted=False):
             Ak = R @ Q
         
         if tridiagonal:
-            off.append(Ak[m-1, m-2])
+            off.append(np.abs(Ak[m-1, m-2]))
             if np.abs(Ak[m-1, m-2]) < tol:
                 break
         else:
