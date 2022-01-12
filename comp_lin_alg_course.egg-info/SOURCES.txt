@@ -62,6 +62,7 @@ cw3/README
 cw3/ex1.py
 cw3/ex2.py
 cw3/__pycache__/ex1.cpython-38.pyc
+cw3/__pycache__/ex2.cpython-37.pyc
 cw3/__pycache__/ex2.cpython-38.pyc
 cw3/tests/ex1_tests.py
 cw3/tests/ex2_tests.py
