@@ -38,7 +38,7 @@ def ev_A(n, nit):
     A = createA(n)
     e = np.zeros(2 * n, dtype=complex)
     # tol does nothing in this case (matrix is not upper-triangular)
-    Ak = pure_QR(A, nit, .001)
+    Ak = pure_QR(A, nit, -1)
     for i in range(n):
         e[i] = 1j *  Ak[2*i, 2*i + 1]
     e[n:] = -e[:n]
@@ -79,7 +79,7 @@ def ev_B(n, nit):
     B = createB(n)
     e = np.zeros(2 * n, dtype=complex)
     # tol does nothing in this case (matrix is not upper-triangular)
-    Bk = pure_QR(B, nit, .001)
+    Bk = pure_QR(B, nit, -1)
     for i in range(n):
         det = -Bk[2*i, 2*i + 1] * Bk[2*i + 1, 2*i]
         e[i] = 1j * np.sqrt(det)
