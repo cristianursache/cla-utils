@@ -235,12 +235,16 @@ def pure_QR(A, maxit, tol=1e-12, tridiagonal=False):
     m = len(A)
     
     Ak = A.copy()
+
+    if tridiagonal:
+        off = []
     
     for _ in range(maxit):
         Q, R = householder_qr(Ak)
         Ak = R @ Q
         
         if tridiagonal:
+            off.append(Ak[m-1, m-2])
             if np.abs(Ak[m-1, m-2]) < tol:
                 break
         else:
@@ -248,4 +252,7 @@ def pure_QR(A, maxit, tol=1e-12, tridiagonal=False):
             if np.linalg.norm(T) < tol:
                 break
     
-    return Ak
+    if tridiagonal:
+        return Ak, off
+    else:
+        return Ak
