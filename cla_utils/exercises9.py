@@ -221,7 +221,7 @@ def rq_it(A, x0, tol, maxit, store_iterations=False):
         return x, l
 
 
-def pure_QR(A, maxit, tol):
+def pure_QR(A, maxit, tol=1e-12, tridiagonal=False):
     """
     For matrix A, apply the QR algorithm and return the result.
 
@@ -232,13 +232,20 @@ def pure_QR(A, maxit, tol):
     :return Ak: the result
     """
 
+    m = len(A)
+    
     Ak = A.copy()
     
     for _ in range(maxit):
         Q, R = householder_qr(Ak)
         Ak = R @ Q
-        T = np.tril(Ak, -1)
-        if np.linalg.norm(T) < tol:
-            break
+        
+        if tridiagonal:
+            if np.abs(Ak[m-1, m-2]) < tol:
+                break
+        else:
+            T = np.tril(Ak, -1)
+            if np.linalg.norm(T) < tol:
+                break
     
     return Ak
