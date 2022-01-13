@@ -8,12 +8,12 @@ def createAij(n):
 
 # Eigenvalues of A using np.linalg.eig
 A = createAij(5)
-#print(np.linalg.eig(A)[0])
+print(np.linalg.eig(A)[0])
 
 # Eigenvalues of A using the new termination condition
 hessenberg(A)
 Ak = pure_QR(A, 10000, tridiagonal=True)[0]
-#print(np.diag(Ak, 0))
+print(np.diag(Ak, 0))
 
 def modified_QR(A, maxit, shifted=False):
     """
@@ -50,8 +50,8 @@ def modified_QR(A, maxit, shifted=False):
 
 # Eigenvalues of A using the modified QR algoritm
 A = createAij(5)
-#print(modified_QR(A, 5000)[0])
+print(modified_QR(A, 5000)[0])
 
 # Eigenvalues of A using the shifted modified QR algorithm
 A = createAij(5)
-#print(modified_QR(A, 5000, shifted=True)[0])
+print(modified_QR(A, 5000, shifted=True)[0])
